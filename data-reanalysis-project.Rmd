@@ -361,9 +361,9 @@ wilcoxsign_test(oc.int ~ og.int, distribution = "exact")
 
 ```
 
-The resuls of both these tests match with those presented in the paper. I get a _z_-value of -2.023 and an exac _p_-value of 0.063.
+The resuls of both these tests match with those presented in the paper. I get a _z_-value of -2.023 and an exact _p_-value of 0.063.
 
-The authors also present these data in a graph in Figure S3 in the supplementary data.
+The authors also present these data in a graph in Figure S3 in the supplementary data:
 ```{r}
 
 # The 'myPalette' code below makes sure that Type A calls are always colored black, Type B calls always dark grey, etc.
@@ -397,4 +397,5 @@ Anyhow, these graphs make it clear, more clearly than the previous Wilxocon test
 <img src="img/figureS3.png" width="700px"/>
 
 This study shows that when titi monkeys discover an oncilla or caracara in an uncharacteristic location (so Raptor on Ground or Oncilla in Canopy) they modify their initial call sequence, as well as the duration and rate at which the monkeys are alarm calling. The authors state that titi monkeys thus encode information about predator type an location in their calls. I'm not sure I agree with their conclusion, because how often are titis really going to see caracaras on the forest floor and oncillas in trees!? Maybe these results just show that they recognize the type of predator, but are confused about what exactly is going on.
+
 In general, I think the data show that the monkeys are much more alarmed by the presence of an oncilla than a caracara. I wonder what would have happened had they used a Harpy eagle model instead of a caracara model!

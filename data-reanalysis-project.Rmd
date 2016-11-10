@@ -283,7 +283,7 @@ G
 pchisq(G, df=degrees, lower.tail=FALSE) # Using that G-value to get to th p-value.
 ```
 
-As you can see from these results, the first method is probably the one that ws used by the authors as it was a Williams G-test, the second version is a general G-test and not a Williams G-test, and thus has slightly different G- and _p_-values.
+As you can see from these results, the first method is probably the one that ws used by the authors (that is, if they used R at all) as it was a Williams G-test, the second version is a general G-test and not a Williams G-test, and thus has slightly different G- and _p_-values.
 Either way, no matter what combinations of data I use from Tabel S2, I cannot replicate any of the results in their paper. The numbers I used above are the observed vs. expected frequencies of call sequences for the 'Raptor on Ground' condition. Their results for this test are as follows:
 G = 6.2639, d.f. = 2, and _p_ = 0.0436.
 Quite disappointing, but let's move on to the next section!
@@ -311,10 +311,13 @@ Figure 2 as in the article, for comparison:
 
 <img src="img/figure2.png" width="700px"/>
 
+When looking at these histograms it becomes apparent that titis respond very different to encountering an oncilla than to encountering a caracara. Both duration and the number of calls per individual are much higher when an oncilla is encountered than when a caracara is encountered. What this means depends on the behavior of the primates once they stop vocalizing in case of the caracara. Do they resume daily business, or do they keep quiet and hide? In the first case it could suggest that titis don't feel as threatened by the presence of a caracara when compared to the presence of an oncilla. Strangely enough, the authors do not mention these results in their discussion at all. I felt at the least they should have discussed if and why the caracara is or is not a good predator model in this study.
+
 
 ##Friedman Tests - Do duration and # of alarm calls vary with the nature of the threat?
 
-To find out if the monkeys respond differently to raptors vs. oncillas or canopy vs. ground, the auhors conducted Friedman tests.
+To confirm the histogram results with statistics, the auhors conducted Friedman tests.
+First, this is the Friedman test for differences in duration of the calls between the four conditions. 
 ```{r}
 # Cutting the two invalid datapoints from dataset:
 data3.1 <- data3[-c(21:23), ] 
@@ -327,16 +330,21 @@ data3.1$Group <- factor(data3.1$Group)
 friedman.test(data3.1$Dur.MIN ~ Stimulus|Group, data3.1) 
 ```
 
-This first Friedman Test gets me the same _X_ <sup>2</sup> value as in the paper, but my _p_-value of 0.006 is different than their 0.001. I'm not sure why, as the graphs and _X_ <sup>2</sup> values do match up.
+This first Friedman Test gets me the same _X_ <sup>2</sup> value of 12.120 as in the paper, but my _p_-value of 0.006 is different than their _p_-value of 0.001. I'm not sure why, as the previous histograms of the same data and _X_ <sup>2</sup>-values do match up.
 
+Secondly, a Friedman test for the differences in number of calls per individual in the four conditions.
 ```{r}
 friedman.test(data3.1$calls.ind ~ Stimulus|Group, data3.1)
 
 ```
 
-Same issue here, all data match up except for the _p_-value.
+Here the same issue returns: all data match up except for the _p_-value. Not really sure why.
+
+
 
 ##Wilcoxon Rank Tests
+
+To assess in more detail where these differences in the duration and number of calls are situated between the four predator condtions, the authors conducted Wilcoxon Rank Tests.
 ```{r}
 library(coin)
 raptor.dur <- c(data3.1$Dur.MIN[1:10])

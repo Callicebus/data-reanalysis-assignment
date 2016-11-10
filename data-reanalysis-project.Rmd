@@ -48,7 +48,9 @@ I will be looking for you to clearly take your reader through all of the element
 
 
 
-This paper investigates the alarm calls of the [black-fronted titi monkey](https://upload.wikimedia.org/wikipedia/commons/0/05/Callicebus_nigrifrons_Minas_Gerais.jpg). These small Neotropical primates are known to be hunted by a variety of animals, such as raptors, terrestrial carnovires, and snakes. In a previous study, which you can find [here](http://link.springer.com/article/10.1007/s00265-011-1313-0), Cäsar et al. established that the titis use two main call types upon encountering predators. Call type A is used upon encountering raptors whereas call type B is used when terrestrial predators are spotted. However, some data seemed to show that maybe these calls were not only predator-specific, but potentially reveal their location. In this study the authors explore this hypothesis by presenting the titi monkeys with two different predator types (oncilla vs. caracara) and elevations (terrestrial vs. aerial). (Even though caracaras do not seem likely predators, [suspected predation of an infant howler monkey](http://static1.1.sqspcdn.com/static/f/1200343/18198280/1337026355110/NP161_C.+plancus+and+A.+palliata_McKinney.pdf?token=lFo5i82vIBGBUSam1b76rBWjCYA%3D) has been reported.) 
+This paper investigates the alarm calls of the [black-fronted titi monkey](https://upload.wikimedia.org/wikipedia/commons/0/05/Callicebus_nigrifrons_Minas_Gerais.jpg). These small Neotropical primates are known to be hunted by a variety of animals, such as raptors, terrestrial carnovires, and snakes. In a previous study, which you can find [here](http://link.springer.com/article/10.1007/s00265-011-1313-0), Cäsar et al. established that the titis use two main alarm calls upon encountering predators. Alarm call type A is used upon encountering raptors whereas call type B is used when terrestrial predators are spotted. Only rarely is call type C heard, and the authors are not sure of wen it is used. 
+
+Some data in this previous study seemed to show that maybe these A and B calls were not only predator-specific, but potentially reveal the predator's location. In this study the authors explore this hypothesis by presenting the titi monkeys with two different predator types (oncilla vs. caracara) and elevations (terrestrial vs. aerial). (Even though caracaras do not seem likely predators, [suspected predation of an infant howler monkey](http://static1.1.sqspcdn.com/static/f/1200343/18198280/1337026355110/NP161_C.+plancus+and+A.+palliata_McKinney.pdf?token=lFo5i82vIBGBUSam1b76rBWjCYA%3D) has been reported.) 
 
 The authors recorded the type of the first 30 calls uttered upon ecountering the oncilla or caracara models, the latency between calls, the duration of the alarm calling, and number of alarm calls per individual, and more (see datasets 'data1', 'data2', 'data3'.  
 
@@ -58,52 +60,58 @@ The authors also recorded and uploaded the vocal response of the titi monkeys in
 
 What I'll do next is take you through their results, step by step explaining how they analyzed their data - and why - and what the results from these analyses are.
 
+
+
 ##Loading the datasets!
 
-Firstly, I'll load in all of the datasets that I will be using throughout my re-analysis. The original file was one Excel file with three sheets of data, here separated into three .csv files. The head(data#) code will show you the first section of these datasets. You can compare them to the original dataset, which you can find in my GitHub repository.
+First, I'll load in all of the datasets that I will be using throughout my re-analysis. The original file was one Excel file with three sheets of data, here separated into three .csv files. The head(data#) code will show you the first section of these datasets. You can compare them to the original dataset, which you can find in my GitHub repository.
 ```{r}
 library(curl)
-f <- curl("https://raw.githubusercontent.com/Callicebus/Data-Reanalysis-Assignment2/master/CallType.csv")
+f <- curl("https://raw.githubusercontent.com/Callicebus/data-reanalysis-assignment/master/CallType.csv")
 data1 <- read.csv(f, header = TRUE, sep = ",", na.strings=c("","NA"), stringsAsFactors = TRUE)
 head(data1)
 
-f2 <- curl("https://raw.githubusercontent.com/Callicebus/Data-Reanalysis-Assignment2/master/CallInterval.csv")
+f2 <- curl("https://raw.githubusercontent.com/Callicebus/data-reanalysis-assignment/master/CallInterval.csv")
 data2 <- read.csv(f2, header = TRUE, sep = ",", stringsAsFactors = TRUE)
 head(data2)
 
-f3 <- curl("https://raw.githubusercontent.com/Callicebus/Data-Reanalysis-Assignment2/master/General.csv")
+f3 <- curl("https://raw.githubusercontent.com/Callicebus/data-reanalysis-assignment/master/General.csv")
 data3 <- read.csv(f3, header = TRUE, sep = ",", stringsAsFactors = TRUE)
 head(data3)
 ```
 
-##Pie charts
-The first thing I'd like to do is replicate the pie charts in Figure 1. It will help us visualize the call types recorded. Even though I think bar charts are a better way of representing these data, I'll stick to pi charts because I haven't learned how to make those yet.
+
+
+##Pie charts - What call types do the titis use?
+I'll start by replicating the pie charts in Figure 1 of the article. In dataset 'data1' the authors recorded the call type (call A, B, C or silence) of the first thirty calls in response to the titis encountering the caracara or oncilla models. They then used these data to vizualise the monkeys' responses in pie charts. Even though I think bar charts are a better way of representing these data, I'll stick to pie charts because I haven't learned how to make those yet.
+The authors split their data up in ine pie chart for the first call, one pie chart for calls 2-4, one pie chart for calls 5-15, and one pie chart for calls 16-30. It is not explained exactly why they chose these clusters.
+
 ```{r}
-#Step 1: I will pull the subsets of data from 'data1' that I need for createing the pie charts.rc will stand for Raptor in Canopy, rg for Raptor on Ground, oc for Oncilla in Canopy, og for Oncilla on Ground. 
+# Step 1: I will pull the subsets of data from 'data1' that I need for creating each individual pie charts. 'rc' will stand for Raptor in Canopy, 'rg' for Raptor on Ground, 'oc' for Oncilla in Canopy, 'og' for Oncilla on Ground. 
 
-#Raptor in Canopy
-rc1 <- data1[1:5,3] #Subsetting only the first call of 'raptor in canopy' (rc) part of the dataset.
-rc.count1 <- table(unlist(rc1)) #Counting the caterogical data for the first call
+# Raptor in Canopy
+rc1 <- data1[1:5,3] # Subsetting only the first call of 'raptor in canopy' (rc) part of the dataset.
+rc.count1 <- table(unlist(rc1)) # Counting the caterogical data for the first call
 rcc1 <- as.data.frame(rc.count1)
-rcc1 <- rcc1[!(rcc1$Var1=="O"),] #Removing calls identified as "Other" and thus not alarm calls.
+rcc1 <- rcc1[!(rcc1$Var1=="O"),] # Removing calls identified as "Other" because they are not alarm calls.
 
-rc2 <- data1[c(1:5), c(4:6)] #Subsetting second to fourth call of 'raptor in canopy' part of dataset.
+rc2 <- data1[c(1:5), c(4:6)] # Subsetting second to fourth call of 'raptor in canopy' part of dataset.
 rc.count2<-table(unlist(rc2))
 rcc2 <- as.data.frame(rc.count2)
 rcc2 <- rcc2[!(rcc2$Var1=="O"),]
 
-rc3 <- data1[c(1:5), c(7:17)] #Subsetting call 5 to 15 of 'raptor in canopy'.
+rc3 <- data1[c(1:5), c(7:17)] # Subsetting call 5 to 15 of 'raptor in canopy'.
 rc.count3 <- table(unlist(rc3))
 rcc3 <- as.data.frame(rc.count3)
 rcc3 <- rcc3[!(rcc3$Var1=="O"),]
 
-rc4 <- data1[c(1:5), c(18:32)] #Subsetting call 16 to 30 of 'raptor in canopy'.
+rc4 <- data1[c(1:5), c(18:32)] # Subsetting call 16 to 30 of 'raptor in canopy'.
 rc.count4 <- table(unlist(rc4))
 rcc4 <- as.data.frame(rc.count4)
 rcc4 <- rcc4[!(rcc4$Var1=="O"),]
 
 
-#Raptor on Ground
+# Raptor on Ground
 rg1 <- data1[6:12,3]
 rg.count1 <- table(unlist(rg1))
 rgc1 <- as.data.frame(rg.count1)
@@ -125,7 +133,7 @@ rgc4 <- as.data.frame(rg.count4)
 rgc4 <- rgc4[!(rgc4$Var1=="O"),]
 colnames(rgc4) <- c("Call","Freq") # I want to only have a legend with the last pie chart, it is redundant to have one at each chart. However, I want the frst column to be called 'CallType' rather than 'Var1'.
 
-#Oncilla on Ground
+# Oncilla on Ground
 og1 <- data1[13:17,3] 
 og.count1 <- table(unlist(og1)) 
 ogc1 <- as.data.frame(og.count1)
@@ -147,7 +155,7 @@ ogc4 <- as.data.frame(og.count4)
 ogc4 <- ogc4[!(ogc4$Var1=="O"),]
 
 
-#Oncilla in Canopy
+# Oncilla in Canopy
 oc1 <- data1[18:23,3] 
 oc.count1 <- table(unlist(oc1)) 
 occ1 <- as.data.frame(oc.count1)
@@ -171,8 +179,9 @@ occ4 <- occ4[!(occ4$Var1=="O"),]
 
 
 ```{r}
-#Step 2: Creating pie charts for each of the subsets of data. Underneath this chunk of code you'll find the original Figure 1 for comparison.
+# Step 2: Creating pie charts for each of the subsets of data.
 
+# Opening some necessary packages
 library(ggplot2)
 library(gridExtra)
 library(cowplot) # The package 'cowplot' is an extension of ggplot2 and helps you create graphs that are ready for publication!
@@ -186,10 +195,10 @@ get_legend<-function(myggplot){
   return(legend)
 }
 
-#This code below makes sure that Type A calls are always colored black, Type B calls always dark grey, etc.
+# The 'myPalette' code below makes sure that Type A calls are always colored black, Type B calls always dark grey, etc.
 myPalette <- c("A" = "black","B" = "darkgrey","C" = "grey", "S" = "white") 
 
-#Pie charts for 'Raptor in Canopy'.
+# Pie charts for 'Raptor in Canopy'.
 pie.rc1 <- ggplot(rcc1, aes(x="", y=Freq, fill=Var1)) + geom_bar(width = 1, stat = "identity") + coord_polar("y", start=0) + theme(legend.position = "none", axis.title.x=element_blank(), axis.title.y=element_blank(), axis.text = element_blank(), axis.ticks = element_blank(), panel.grid  = element_blank(), panel.background = element_rect(colour = "black")) + scale_fill_manual(values = myPalette) + ggtitle("first call")
 
 pie.rc2 <- ggplot(rcc2, aes(x="", y=Freq, fill=Var1)) + geom_bar(width = 1, stat = "identity") + coord_polar("y", start=0) + theme(legend.position = "none", axis.title.x=element_blank(), axis.title.y=element_blank(), axis.text = element_blank(), axis.ticks = element_blank(), panel.grid  = element_blank(), panel.background = element_rect(colour = "black")) + scale_fill_manual(values = myPalette) + ggtitle("early (2-4)")
@@ -199,7 +208,7 @@ pie.rc3 <- ggplot(rcc3, aes(x="", y=Freq, fill=Var1)) + geom_bar(width = 1, stat
 pie.rc4 <- ggplot(rcc4, aes(x="", y=Freq, fill=Var1)) + geom_bar(width = 1, stat = "identity") + coord_polar("y", start=0) + theme(legend.position = "none", axis.title.x=element_blank(), axis.title.y=element_blank(), axis.text = element_blank(), axis.ticks = element_blank(), panel.grid  = element_blank(), panel.background = element_rect(colour = "black")) + scale_fill_manual(values = myPalette) + ggtitle("late (16-30)")
 
 
-#Pie charts for 'Raptor on Ground'.
+# Pie charts for 'Raptor on Ground'.
 pie.rg1 <- ggplot(rgc1, aes(x="", y=Freq, fill=Var1)) + geom_bar(width = 1, stat = "identity") + coord_polar("y", start=0) + theme(legend.position = "none", axis.title.x=element_blank(), axis.title.y=element_blank(), axis.text = element_blank(), axis.ticks = element_blank(), panel.grid  = element_blank(), panel.background = element_rect(colour = "black")) + scale_fill_manual(values = myPalette)
 
 pie.rg2 <- ggplot(rgc2, aes(x="", y=Freq, fill=Var1))+
@@ -213,7 +222,7 @@ legend <- get_legend(pie.rg4)
 pie.rg4 <- pie.rg4 + theme(legend.position = "none")
 
 
-#Pie charts 'Oncilla on Ground'
+# Pie charts 'Oncilla on Ground'
 pie.og1 <- ggplot(ogc1, aes(x="", y=Freq, fill=Var1)) + geom_bar(width = 1, stat = "identity") + coord_polar("y", start=0) + theme(legend.position = "none", axis.title.x=element_blank(), axis.title.y=element_blank(), axis.text = element_blank(), axis.ticks = element_blank(), panel.grid  = element_blank(), panel.background = element_rect(colour = "black")) + scale_fill_manual(values = myPalette)
 
 pie.og2 <- ggplot(ogc2, aes(x="", y=Freq, fill=Var1)) + geom_bar(width = 1, stat = "identity") + coord_polar("y", start=0) + theme(legend.position = "none", axis.title.x=element_blank(), axis.title.y=element_blank(), axis.text = element_blank(), axis.ticks = element_blank(), panel.grid  = element_blank(), panel.background = element_rect(colour = "black")) + scale_fill_manual(values = myPalette)
@@ -223,7 +232,7 @@ pie.og3 <- ggplot(ogc3, aes(x="", y=Freq, fill=Var1)) + geom_bar(width = 1, stat
 pie.og4 <- ggplot(ogc4, aes(x="", y=Freq, fill=Var1)) + geom_bar(width = 1, stat = "identity") + coord_polar("y", start=0) + theme(legend.position = "none", axis.title.x=element_blank(), axis.title.y=element_blank(), axis.text = element_blank(), axis.ticks = element_blank(), panel.grid  = element_blank(), panel.background = element_rect(colour = "black")) + scale_fill_manual(values = myPalette)
 
 
-#Pie charts 'Oncilla in Canopy'
+# Pie charts 'Oncilla in Canopy'
 pie.oc1 <- ggplot(occ1, aes(x="", y=Freq, fill=Var1)) + geom_bar(width = 1, stat = "identity") + coord_polar("y", start=0) + theme(legend.position = "none", axis.title.x=element_blank(), axis.title.y=element_blank(), axis.text = element_blank(), axis.ticks = element_blank(), panel.grid  = element_blank(), panel.background = element_rect(colour = "black")) + scale_fill_manual(values = myPalette)
 
 pie.oc2 <- ggplot(occ2, aes(x="", y=Freq, fill=Var1)) + geom_bar(width = 1, stat = "identity") + coord_polar("y", start=0) + theme(legend.position = "none", axis.title.x=element_blank(), axis.title.y=element_blank(), axis.text = element_blank(), axis.ticks = element_blank(), panel.grid  = element_blank(), panel.background = element_rect(colour = "black")) + scale_fill_manual(values = myPalette)
@@ -232,56 +241,100 @@ pie.oc3 <- ggplot(occ3, aes(x="", y=Freq, fill=Var1)) + geom_bar(width = 1, stat
 
 pie.oc4 <- ggplot(occ4, aes(x="", y=Freq, fill=Var1)) + geom_bar(width = 1, stat = "identity") + coord_polar("y", start=0) + theme(legend.position = "none", axis.title.x=element_blank(), axis.title.y=element_blank(), axis.text = element_blank(), axis.ticks = element_blank(), panel.grid  = element_blank(), panel.background = element_rect(colour = "black")) + scale_fill_manual(values = myPalette)
 
-#I'd like to get all 16 pie charts in a row, like in Figure 1 of the article.
-
+# I'd like to get all 16 pie charts in a row, like in Figure 1 of the article. To do so, I'll first use the plot_grid() command, which lets you organize your graphs and add labels to them.
 totalplot <- plot_grid(pie.rc1, pie.rc2, pie.rc3, pie.rc4, pie.rg1, pie.rg2, pie.rg3, pie.rg4, pie.og1, pie.og2, pie.og3, pie.og4, pie.oc1, pie.oc2, pie.oc3, pie.oc4, labels=c("Raptor Canopy", " ", " ", " ", "Raptor Ground", " ", " ", " ", "Oncilla Ground", " ", " ", " ", "Oncilla Canopy", " "," "," ", ncol = 4, nrow = 4), label_size = 10, hjust = -0.5, vjust = 10.5)
 
+# grid.arrange() is a cool little code! It lets you arrange graphs within a table-like structure, so that you can use it to place the legend (which we saved in 'legend' earlier) just once underneath all your pie charts rather than with each individual chart! Less clutter!
 grid.arrange(totalplot, legend, nrow = 2, heights = c(30, 2))
-
 ```
 
 If I'd had more time (i.e. started this assignment earlier...) I would have liked to find out how I can make sure the graph title on the top 4 pie charts doesn't affect the size of the charts (they are currently slightly smaller than the rest due to title placement). 
-For comparison below you'll see Figure 1 as published in the article.
+For comparison below you'll see Figure 1 as published in the article. The charts produces with the code above seem to be pretty accurate when compared to Figure 1 in the article.
 
 <img src="img/figure1.png" width="1000px"/>
 
 
-##G-test
-```{r
-library(DescTools)
-observed <- c(5,5, 4,0) #Observed frequencies
-expected <- c(90/14,50/14,36/14,20/14) #Expected proportions
-chisq.test(x=observed, y=expected)
-```
 
+##G-test - observed vs. expected call sequence frequencies
 
-##Replicating Figure 2 & Friedman Test
+Next, the authors used a G-test to find out if the observed call sequences are different from the expected call frequencies. In the article the authors sugges that they use Table S2, a contingency table, to conduct these G-tests.
+
+<img src="img/TableS2.png" width="750px"/>
+
+A G-test in R can be done through the GTest() function, which is part of the DescTools package. An exampe is below, using data from Table S2: 
+
 ```{r}
-data3$Stimulus = factor(data3$Stimulus, unique(data3$Stimulus)) #This snippet of code makes R follow the order in which the 4 test conditions appear in the data. Without this code, my boxplots were ordered alphabetically, and thus organized exactly opposite of what was shown in Figure 2 in the article.
+library(DescTools)
+observed <- c(5, 1, 3) # Observed frequencies
+expected <- c(rep(1/3, 3)) # Expected proportions
 
-boxplot <- ggplot(data3[1:20,], aes(Stimulus, Dur.MIN)) + geom_boxplot() + theme(axis.text.x = element_text(angle=0), panel.background = element_rect(fill = 'white'), axis.line.x = element_line(color="black", size = 0.5), axis.line.y = element_line(color="black", size = 0.5), legend.position = "none", axis.title.x=element_blank()) + scale_y_continuous(breaks=seq(0,120,20)) + labs(y = "duration (min)")
-
-boxplot2 <- ggplot(data3[1:20,], aes(Stimulus, calls.ind)) + geom_boxplot() + theme(axis.text.x = element_text(angle=0), panel.background = element_rect(fill = 'white'), axis.line.x = element_line(color="black", size = 0.5), axis.line.y = element_line(color="black", size = 0.5)) + scale_y_continuous(breaks=seq(0,60,10)) + labs(y = "no. calls per individual")
-
-plot_grid(boxplot, boxplot2, labels=c("(a)", "(b)"), ncol = 1, nrow = 2)
+GTest(x=observed, p=expected, correct="williams")
 ```
+
+One can also do this without the DescTools package by using the following code:
+```{r}
+observed <- c(5, 1, 3)
+expected <- c(rep(1/3, 3))
+
+degrees <- 2 # Degrees of freedom
+expected.count <- sum(observed)*expected
+G <- 2 * sum(observed * log(observed / expected.count)) # Calculting G-value
+G                          
+pchisq(G, df=degrees, lower.tail=FALSE) # Using that G-value to get to th p-value.
+```
+
+As you can see from these results, the first method is probably the one that ws used by the authors as it was a Williams G-test, the second version is a general G-test and not a Williams G-test, and thus has slightly different G- and _p_-values.
+Either way, no matter what combinations of data I use from Tabel S2, I cannot replicate any of the results in their paper. The numbers I used above are the observed vs. expected frequencies of call sequences for the 'Raptor on Ground' condition. Their results for this test are as follows:
+G = 6.2639, d.f. = 2, and _p_ = 0.0436.
+Quite disappointing, but let's move on to the next section!
+
+
+
+##Histograms of call duration and rate vs. nature of threat
+
+Next, in their Figure 2 the authors create histograms to show (a) the median duration of the calls in minutes for all four testing conditions and (b) the median number of calls per individual for all four conditions. I figured out how to make the standard histograms, which show you mean rather than median, but cannot seem to find out how to make it represent a line for median rather than mean. Nonetheless, the results in my representation are (nearly?) identical to those in Figure 2.
+
+```{r}
+# This first snippet of code makes R follow the order in which the 4 test conditions appear in the dataset. Without this code, my boxplots were ordered alphabetically, and thus organized exactly opposite of what was shown in Figure 2.
+data3$Stimulus = factor(data3$Stimulus, unique(data3$Stimulus)) 
+
+# I only selected rows 1 to 20 because the last 2 rows of data were invalid records, and thus need to be kept out of the analysis.
+boxplot <- ggplot(data3[1:20,], aes(Stimulus, Dur.MIN)) + geom_boxplot() + theme(text = element_text(size=10), axis.text.x = element_text(angle=0), panel.background = element_rect(fill = 'white'), axis.line.x = element_line(color="black", size = 0.5), axis.line.y = element_line(color="black", size = 0.5), legend.position = "none", axis.title.x=element_blank()) + scale_y_continuous(breaks=seq(0,120,20)) + labs(y = "duration (min)")
+
+boxplot2 <- ggplot(data3[1:20,], aes(Stimulus, calls.ind)) + geom_boxplot() + theme(text = element_text(size=10), axis.text.x = element_text(angle=0), panel.background = element_rect(fill = 'white'), axis.line.x = element_line(color="black", size = 0.5), axis.line.y = element_line(color="black", size = 0.5)) + scale_y_continuous(breaks=seq(0,60,10)) + labs(y = "no. calls per individual")
+
+# Again by using plot_grid() you can organize your graphs in such a way that they nearly perfectly compare to those in Figure 2. I just cannot find out how to change their height in plot_grid()!
+plot_grid(boxplot, boxplot2, labels=c("(a)", "(b)"), ncol = 1, nrow = 2, label_size = 12)
+```
+
+Figure 2 as in the article, for comparison:
+
 <img src="img/figure2.png" width="700px"/>
 
 
+##Friedman Tests - Do duration and # of alarm calls vary with the nature of the threat?
+
+To find out if the monkeys respond differently to raptors vs. oncillas or canopy vs. ground, the auhors conducted Friedman tests.
 ```{r}
-data3.1 <- data3[-c(21:23), ]
-data3.1$Stimulus <- factor(data3.1$Stimulus) #Friedman Test does not work if you don't change your group and block variables into factors. 
+# Cutting the two invalid datapoints from dataset:
+data3.1 <- data3[-c(21:23), ] 
+
+# Friedman Test does not work if you don't change your group and block variables into factors. 
+data3.1$Stimulus <- factor(data3.1$Stimulus) 
 data3.1$Group <- factor(data3.1$Group)
+
+# Friedman test:
 friedman.test(data3.1$Dur.MIN ~ Stimulus|Group, data3.1) 
 ```
 
-This first Friedman Test gets me the same X2 value as in the paper, but my p-value of 0.006 is different than their 0.001. I'm not sure why, as the graphs and X2 values do match up.
+This first Friedman Test gets me the same _X_ <sup>2</sup> value as in the paper, but my _p_-value of 0.006 is different than their 0.001. I'm not sure why, as the graphs and _X_ <sup>2</sup> values do match up.
 
 ```{r}
 friedman.test(data3.1$calls.ind ~ Stimulus|Group, data3.1)
 
 ```
-Same issue here, all data match up except for the p-value.
+
+Same issue here, all data match up except for the _p_-value.
 
 ##Wilcoxon Rank Tests
 ```{r}
